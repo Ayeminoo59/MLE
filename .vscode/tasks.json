@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Python: Run Current File (python3)",
+      "type": "shell",
+      "command": "python3",
+      "args": ["${file}"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": false
+      },
+      "problemMatcher": []
+    }
+  ]
+}

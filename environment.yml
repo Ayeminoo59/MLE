@@ -1,0 +1,10 @@
+name: mle
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pytest          # Code စစ်ဆေးဖို့ tool
+  - ruff            # Code သန့်ရှင်းရေးလုပ်ဖို့ tool
+  - pip:
+    - black         # Code format ချဖို့ tool
