@@ -1,4 +1,7 @@
 {
   "python.defaultInterpreterPath": "python3",
   "terminal.integrated.defaultProfile.osx": "zsh"
+  ,
+  "terminal.integrated.fontFamily": "Menlo, 'Noto Sans Myanmar', 'Pyidaungsu', monospace",
+  "editor.fontFamily": "'Noto Sans Myanmar', 'Pyidaungsu', Menlo, monospace"
 }

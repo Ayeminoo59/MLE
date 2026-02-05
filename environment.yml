@@ -7,4 +7,5 @@ dependencies:
   - pytest          # Code စစ်ဆေးဖို့ tool
   - ruff            # Code သန့်ရှင်းရေးလုပ်ဖို့ tool
   - pip:
-    - black         # Code format ချဖို့ tool
+    - black # Code format ချဖို့ tool
+    - faker        
