@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional CV Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .section-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        .skill-tag {
+            transition: all 0.2s ease;
+        }
+        .skill-tag:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- Header -->
+    <header class="bg-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-file-alt text-3xl text-purple-600"></i>
+                    <h1 class="text-3xl font-bold text-gray-800">Professional CV Builder</h1>
+                </div>
+                <div class="flex space-x-4">
+                    <button onclick="previewCV()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                        <i class="fas fa-eye mr-2"></i>Preview
+                    </button>
+                    <button onclick="resetForm()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                        <i class="fas fa-redo mr-2"></i>Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <form id="cvForm" class="space-y-8">
+            <!-- Personal Information Section -->
+            <section class="section-card rounded-2xl shadow-xl p-8">
+                <div class="flex items-center mb-6">
+                    <i class="fas fa-user text-2xl text-purple-600 mr-3"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">Personal Information</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                        <input type="text" name="fullName" required 
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Professional Title</label>
+                        <input type="text" name="title" 
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                        <input type="email" name="email" required 
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                        <input type="tel" name="phone" 
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                        <input type="text" name="location" 
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">LinkedIn/Portfolio</label>
+                        <input type="url" name="portfolio" 
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Professional Summary</label>
+                    <textarea name="summary" rows="4" 
+                              class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+                </div>
+            </section>
+
+            <!-- Experience Section -->
+            <section class="section-card rounded-2xl shadow-xl p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-briefcase text-2xl text-purple-600 mr-3"></i>
+                        <h2 class="text-2xl font-bold text-gray-800">Work Experience</h2>
+                    </div>
+                    <button type="button" onclick="addExperience()" 
+                            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                        <i class="fas fa-plus mr-2"></i>Add Experience
+                    </button>
+                </div>
+                <div id="experienceList" class="space-y-4">
+                    <!-- Experience items will be added here dynamically -->
+                </div>
+            </section>
+
+            <!-- Education Section -->
+            <section class="section-card rounded-2xl shadow-xl p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-graduation-cap text-2xl text-purple-600 mr-3"></i>
+                        <h2 class="text-2xl font-bold text-gray-800">Education</h2>
+                    </div>
+                    <button type="button" onclick="addEducation()" 
+                            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                        <i class="fas fa-plus mr-2"></i>Add Education
+                    </button>
+                </div>
+                <div id="educationList" class="space-y-4">
+                    <!-- Education items will be added here dynamically -->
+                </div>
+            </section>
+
+            <!-- Skills Section -->
+            <section class="section-card rounded-2xl shadow-xl p-8">
+                <div class="flex items-center mb-6">
+                    <i class="fas fa-cogs text-2xl text-purple-600 mr-3"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">Skills</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Technical Skills</label>
+                        <div class="flex flex-wrap gap-2" id="technicalSkills">
+                            <!-- Skills will be added here -->
+                        </div>
+                        <div class="mt-2 flex">
+                            <input type="text" id="technicalSkillInput" placeholder="Add a skill..." 
+                                   class="form-input flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <button type="button" onclick="addSkill('technical')" 
+                                    class="px-4 py-2 bg-purple-600 text-white rounded-r-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Soft Skills</label>
+                        <div class="flex flex-wrap gap-2" id="softSkills">
+                            <!-- Skills will be added here -->
+                        </div>
+                        <div class="mt-2 flex">
+                            <input type="text" id="softSkillInput" placeholder="Add a skill..." 
+                                   class="form-input flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <button type="button" onclick="addSkill('soft')" 
+                                    class="px-4 py-2 bg-purple-600 text-white rounded-r-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Languages</label>
+                        <div class="flex flex-wrap gap-2" id="languages">
+                            <!-- Languages will be added here -->
+                        </div>
+                        <div class="mt-2 flex">
+                            <input type="text" id="languageInput" placeholder="Add a language..." 
+                                   class="form-input flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <button type="button" onclick="addSkill('language')" 
+                                    class="px-4 py-2 bg-purple-600 text-white rounded-r-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Submit Button -->
+            <div class="flex justify-center">
+                <button type="submit" 
+                        class="btn-primary px-8 py-4 text-white font-semibold rounded-lg text-lg">
+                    <i class="fas fa-save mr-2"></i>Generate CV
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-gray-800">CV Preview</h3>
+                    <button onclick="closePreview()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div id="previewContent" class="p-8">
+                    <!-- Preview content will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="cv_script.js"></script>
+</body>
+</html>

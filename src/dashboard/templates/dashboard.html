@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal AI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .metric-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Personal AI Dashboard</h1>
+            <p class="text-gray-600">Track your productivity and activities with Pandas-powered analytics</p>
+        </header>
+
+        <!-- Metrics Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="metric-card bg-white rounded-lg shadow p-6">
+                <h3 class="text-sm font-medium text-gray-500 mb-2">Productivity Score</h3>
+                <p id="productivity-score" class="text-3xl font-bold text-blue-600">-</p>
+            </div>
+            <div class="metric-card bg-white rounded-lg shadow p-6">
+                <h3 class="text-sm font-medium text-gray-500 mb-2">Tasks Completed</h3>
+                <p id="tasks-completed" class="text-3xl font-bold text-green-600">-</p>
+            </div>
+            <div class="metric-card bg-white rounded-lg shadow p-6">
+                <h3 class="text-sm font-medium text-gray-500 mb-2">Hours Worked</h3>
+                <p id="hours-worked" class="text-3xl font-bold text-purple-600">-</p>
+            </div>
+            <div class="metric-card bg-white rounded-lg shadow p-6">
+                <h3 class="text-sm font-medium text-gray-500 mb-2">Learning Hours</h3>
+                <p id="learning-hours" class="text-3xl font-bold text-orange-600">-</p>
+            </div>
+        </section>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Tasks Section -->
+            <section class="bg-white rounded-lg shadow p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Tasks</h2>
+                    <button onclick="refreshTasks()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Refresh
+                    </button>
+                </div>
+                <div id="tasks-container" class="space-y-3">
+                    <p class="text-gray-500">Loading tasks...</p>
+                </div>
+            </section>
+
+            <!-- Activities Section -->
+            <section class="bg-white rounded-lg shadow p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Recent Activities</h2>
+                    <button onclick="refreshActivities()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                        Refresh
+                    </button>
+                </div>
+                <div id="activities-container" class="space-y-3">
+                    <p class="text-gray-500">Loading activities...</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Analytics Section -->
+        <section class="mt-8 bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Analytics</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-3">Activity Trends</h3>
+                    <canvas id="activity-chart"></canvas>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-3">Category Breakdown</h3>
+                    <canvas id="category-chart"></canvas>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Global variables for charts
+        let activityChart = null;
+        let categoryChart = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMetrics();
+            loadTasks();
+            loadActivities();
+            loadAnalytics();
+        });
+
+        // Load dashboard metrics
+        async function loadMetrics() {
+            try {
+                const response = await fetch('/api/metrics');
+                const metrics = await response.json();
+                
+                document.getElementById('productivity-score').textContent = metrics.productivity_score + '%';
+                document.getElementById('tasks-completed').textContent = metrics.tasks_completed;
+                document.getElementById('hours-worked').textContent = metrics.hours_worked;
+                document.getElementById('learning-hours').textContent = metrics.learning_hours;
+            } catch (error) {
+                console.error('Error loading metrics:', error);
+            }
+        }
+
+        // Load tasks
+        async function loadTasks() {
+            try {
+                const response = await fetch('/api/tasks');
+                const data = await response.json();
+                
+                const container = document.getElementById('tasks-container');
+                container.innerHTML = '';
+                
+                data.data.forEach(task => {
+                    const taskElement = createTaskElement(task);
+                    container.appendChild(taskElement);
+                });
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
+        }
+
+        // Create task element
+        function createTaskElement(task) {
+            const div = document.createElement('div');
+            div.className = 'border rounded-lg p-4 hover:bg-gray-50';
+            
+            const statusColor = {
+                'completed': 'bg-green-100 text-green-800',
+                'in_progress': 'bg-yellow-100 text-yellow-800',
+                'pending': 'bg-gray-100 text-gray-800'
+            }[task.status] || 'bg-gray-100 text-gray-800';
+            
+            const priorityColor = {
+                'high': 'text-red-600',
+                'medium': 'text-yellow-600',
+                'low': 'text-green-600'
+            }[task.priority] || 'text-gray-600';
+            
+            div.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="font-medium text-gray-800">${task.title}</h4>
+                        <p class="text-sm text-gray-500 mt-1">Due: ${task.due_date}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="px-2 py-1 text-xs rounded-full ${statusColor}">${task.status}</span>
+                        <span class="text-xs font-medium ${priorityColor}">${task.priority}</span>
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        // Load activities
+        async function loadActivities() {
+            try {
+                const response = await fetch('/api/activities');
+                const data = await response.json();
+                
+                const container = document.getElementById('activities-container');
+                container.innerHTML = '';
+                
+                data.summary.recent_activities.forEach(activity => {
+                    const activityElement = createActivityElement(activity);
+                    container.appendChild(activityElement);
+                });
+            } catch (error) {
+                console.error('Error loading activities:', error);
+            }
+        }
+
+        // Create activity element
+        function createActivityElement(activity) {
+            const div = document.createElement('div');
+            div.className = 'border rounded-lg p-4 hover:bg-gray-50';
+            
+            const categoryColor = {
+                'work': 'bg-blue-100 text-blue-800',
+                'learning': 'bg-purple-100 text-purple-800',
+                'exercise': 'bg-green-100 text-green-800',
+                'break': 'bg-gray-100 text-gray-800'
+            }[activity.category] || 'bg-gray-100 text-gray-800';
+            
+            div.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="font-medium text-gray-800">${activity.activity}</h4>
+                        <p class="text-sm text-gray-500 mt-1">${activity.date} • ${activity.duration} minutes</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs rounded-full ${categoryColor}">${activity.category}</span>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        // Load analytics
+        async function loadAnalytics() {
+            try {
+                const response = await fetch('/api/analytics');
+                const analytics = await response.json();
+                
+                // Create activity trends chart
+                createActivityChart(analytics.activity_trends);
+                
+                // Create category breakdown chart
+                createCategoryChart(analytics.category_breakdown);
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        // Create activity trends chart
+        function createActivityChart(trends) {
+            const ctx = document.getElementById('activity-chart').getContext('2d');
+            
+            if (activityChart) {
+                activityChart.destroy();
+            }
+            
+            activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trends.map(t => t.date),
+                    datasets: [{
+                        label: 'Duration (minutes)',
+                        data: trends.map(t => t.duration),
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create category breakdown chart
+        function createCategoryChart(breakdown) {
+            const ctx = document.getElementById('category-chart').getContext('2d');
+            
+            if (categoryChart) {
+                categoryChart.destroy();
+            }
+            
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(breakdown),
+                    datasets: [{
+                        data: Object.values(breakdown),
+                        backgroundColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(147, 51, 234)',
+                            'rgb(34, 197, 94)',
+                            'rgb(156, 163, 175)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        // Refresh functions
+        function refreshTasks() {
+            loadTasks();
+        }
+
+        function refreshActivities() {
+            loadActivities();
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            loadMetrics();
+            loadTasks();
+            loadActivities();
+            loadAnalytics();
+        }, 30000);
+    </script>
+</body>
+</html>
